@@ -4,4 +4,11 @@ version = "0.1.0"
 authors = ["Neville Dipale <nevilledips@gmail.com>"]
 edition = "2018"
 
+[lib]
+name = "rust_arrow_sql"
+path = "src/lib.rs"
+
 [dependencies]
+arrow = "0.13.0"
+chrono = "0.4"
+postgres = {version = "0.16.0-rc.1", features = ["default", "with-chrono-0_4", "with-uuid-0_7"]}
