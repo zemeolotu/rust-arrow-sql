@@ -18,5 +18,5 @@ chrono = "0.4"
 postgres = {version = "0.17.5", features = ["with-chrono-0_4", "with-uuid-0_8"]}
 
 # [profile.dev]
-# opt-level = 3           # Use slightly better optimizations.
+# opt-level = 1         # Use slightly better optimizations.
 # overflow-checks = false 

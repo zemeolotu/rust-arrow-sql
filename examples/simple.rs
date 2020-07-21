@@ -8,11 +8,8 @@ use rust_arrow_sql::postgres::reader::PostgresReader;
 use rust_arrow_sql::reader::DatabaseReader;
 
 fn main() {
-    // Statements here are executed when the compiled binary is called
-
-    // Print text to the console
     let options = ReaderOptions{
-        batch_size: 10000,
+        batch_size: 100000,
         limit: None,
         projection: None,
         protocol: DbProto::Postgres, 
@@ -21,29 +18,17 @@ fn main() {
     };
     let reader = PostgresReader{options: options};
     let before = Instant::now();
-    let zeme =  reader.read();
-    // let zeme =  *reader.read();
-    // let mut vec = Vec::new();
-    // let mut writer = StreamWriter::try_new(vec, &schema)?;
-    for item in zeme {
-        println!("sucess")
+
+    let mut batches =  reader.read();
+    let first_batch = batches.next().unwrap().unwrap();
+
+    let schema = first_batch.schema();
+    let vec = Vec::new();
+    let mut writer = StreamWriter::try_new(vec, &schema).unwrap();
+
+    writer.write(&first_batch);
+    while let Some(batch) = batches.next() {
+        writer.write(&batch.unwrap());
     }
-
-    // zeme.for_each(|x| println!("sucess"))
-
-    // }
-
-    // let schema = record.schema();
     println!("Elapsed time: {:.2?}", before.elapsed());
-
-    // let mut vec = Vec::new();
-    // let mut writer = StreamWriter::try_new(vec, &schema)?;
-
-    // let mut writer = StreamWriter::try_new(io::stdout(), &schema)?;
-
-    // let mut stream_writer = StreamWriter::try_new(file, &schema).unwrap();
-    //     stream_writer.write(&batch).unwrap();
-    //     stream_writer.finish().unwrap();
-
-        
 }
