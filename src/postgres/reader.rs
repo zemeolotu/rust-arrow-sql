@@ -5,14 +5,14 @@ use crate::reader::DatabaseReader;
 use crate::{ReaderOptions, TableType};
 
 // use arrow::array::*;
-use arrow::builder::*;
+use arrow::array::*;
 use arrow::datatypes::*;
 use arrow::record_batch::RecordBatch;
 use chrono::Timelike;
 use postgres::{Client, NoTls, Row};
 
 pub struct PostgresReader {
-    pub(crate) options: ReaderOptions,
+    pub options: ReaderOptions,
 }
 
 impl PostgresReader {
@@ -83,7 +83,7 @@ impl DatabaseReader for PostgresReader {
                             };
                         }
                     }
-                    DataType::Timestamp(TimeUnit::Millisecond) => {
+                    DataType::Timestamp(TimeUnit::Millisecond, None) => {
                         let field_builder = builder
                             .field_builder::<TimestampMillisecondBuilder>(j)
                             .unwrap();
@@ -118,17 +118,20 @@ impl DatabaseReader for PostgresReader {
                         }
                     }
                     DataType::Utf8 => {
-                        let field_builder = builder.field_builder::<BinaryBuilder>(j).unwrap();
+                        let field_builder = builder.field_builder::<StringBuilder>(j).unwrap();
                         for i in 0..chunk.len() {
                             let row: &Row = chunk.get(i).unwrap();
-                            field_builder.append_string(row.get(j)).unwrap();
+                            match row.try_get(j) {
+                                Ok(value) => field_builder.append_value(value).unwrap(),
+                                Err(_) => field_builder.append_null().unwrap(),
+                            }
                         }
                     }
                     t @ _ => panic!("Field builder for {:?} not yet supported", t),
                 }
             }
             // TODO perhaps change the order of processing so we can do this earlier
-            for i in 0..chunk.len() {
+            for _i in 0..chunk.len() {
                 builder.append(true).unwrap();
             }
             let batch: RecordBatch = RecordBatch::from(&builder.finish());

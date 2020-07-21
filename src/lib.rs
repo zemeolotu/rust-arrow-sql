@@ -1,5 +1,5 @@
-mod postgres;
-mod reader;
+pub mod postgres;
+pub mod reader;
 
 pub enum DbProto {
     Postgres,
@@ -13,23 +13,17 @@ pub enum TableType {
 }
 
 pub struct ReaderOptions {
-    protocol: DbProto,
-    conn_string: String,
+    pub protocol: DbProto,
+    pub conn_string: String,
     /// ignored if table is a query
-    limit: Option<usize>,
-    filter: (),
-    projection: Option<Vec<String>>,
-    table: TableType,
-    batch_size: usize,
+    pub limit: Option<usize>,
+    pub projection: Option<Vec<String>>,
+    pub table: TableType,
+    pub batch_size: usize,
 }
 
 pub enum WriteMode {
     Insert,
     CreateIfNotExist,
     DropAndCreate,
-}
-pub struct WriterOptions {
-    protocol: DbProto,
-    write_mode: WriteMode,
-    conn_string: String,
 }

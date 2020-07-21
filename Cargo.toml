@@ -8,7 +8,15 @@ edition = "2018"
 name = "rust_arrow_sql"
 path = "src/lib.rs"
 
+[[example]]
+name = "example"
+path = "example/simple.rs"
+
 [dependencies]
 arrow = {git = "https://github.com/apache/arrow"}
 chrono = "0.4"
-postgres = {version = "0.16.0-rc.1", features = ["default", "with-chrono-0_4", "with-uuid-0_7"]}
+postgres = {version = "0.17.5", features = ["with-chrono-0_4", "with-uuid-0_8"]}
+
+# [profile.dev]
+# opt-level = 3           # Use slightly better optimizations.
+# overflow-checks = false 

@@ -10,7 +10,7 @@ use postgres::Row;
 pub fn pg_to_arrow_type(dt: &Type) -> Option<DataType> {
     match dt {
         &Type::BOOL => Some(DataType::Boolean),
-        &Type::BYTEA | &Type::CHAR | &Type::NAME | &Type::TEXT | &Type::VARCHAR => {
+        &Type::BYTEA | &Type::CHAR | &Type::BPCHAR | &Type::NAME | &Type::TEXT | &Type::VARCHAR => {
             Some(DataType::Utf8)
         }
         &Type::INT2 => Some(DataType::Int16),
@@ -42,9 +42,9 @@ pub fn pg_to_arrow_type(dt: &Type) -> Option<DataType> {
         //        &TINTERVAL_ARRAY => None,
         //        &DATE => None,
         &Type::TIME => Some(DataType::Time64(TimeUnit::Microsecond)),
-        &Type::TIMESTAMP => Some(DataType::Timestamp(TimeUnit::Millisecond)),
+        &Type::TIMESTAMP => Some(DataType::Timestamp(TimeUnit::Millisecond, None)),
         &Type::TIMESTAMP_ARRAY => Some(DataType::List(Box::new(DataType::Timestamp(
-            TimeUnit::Millisecond,
+            TimeUnit::Millisecond, None
         )))),
         //        &DATE_ARRAY => None,
         &Type::TIME_ARRAY => Some(DataType::List(Box::new(DataType::Time64(
