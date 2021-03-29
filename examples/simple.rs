@@ -13,8 +13,8 @@ fn main() {
         limit: None,
         projection: None,
         protocol: DbProto::Postgres, 
-        conn_string: String::from("host=localhost port=5432 dbname=postgres user=postgres password=admin connect_timeout=10"),
-        table: TableType::Table(String::from("nut_data"))
+        conn_string: String::from("host=localhost port=5432 dbname=postgres user=postgres  connect_timeout=10"),
+        table: TableType::Table(String::from("city"))
     };
     let reader = PostgresReader{options: options};
     let before = Instant::now();

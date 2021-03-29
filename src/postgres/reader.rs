@@ -47,7 +47,7 @@ impl DatabaseReader for PostgresReader {
 
         let schema = row_to_schema(results.get(0).unwrap()).unwrap();
         let field_len = schema.fields().len();
-        let mut builder = StructBuilder::from_schema(schema.clone(), self.options.batch_size);
+        let mut builder = StructBuilder::from_fields(schema.fields().to_vec(), self.options.batch_size);
         let chunks = results.chunks(self.options.batch_size);
         let mut batches = vec![];
         chunks.for_each(|chunk: &[Row]| {

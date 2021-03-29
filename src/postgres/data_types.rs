@@ -4,6 +4,7 @@ use arrow::datatypes::{DataType, Field, Schema, TimeUnit};
 use postgres::types::*;
 use postgres::Row;
 
+
 /// Convert Postgres Type to Arrow DataType
 ///
 /// Not all types are covered, but can be easily added
@@ -25,31 +26,35 @@ pub fn pg_to_arrow_type(dt: &Type) -> Option<DataType> {
         //        &RELTIME => None,
         //        &TINTERVAL => None,
         //        &MONEY => None,
-        &Type::BOOL_ARRAY => Some(DataType::List(Box::new(DataType::Boolean))),
+        &Type::BOOL_ARRAY => Some(DataType::List(Box::new(Field::new("", DataType::Boolean, true)))),
+        // &Type::BOOL_ARRAY => Some(BooleanArray),
         &Type::BYTEA_ARRAY | &Type::CHAR_ARRAY | &Type::NAME_ARRAY => {
-            Some(DataType::List(Box::new(DataType::Utf8)))
+            Some(DataType::List(Box::new(Field::new("", DataType::Utf8, true))))
         }
-        &Type::INT2_ARRAY => Some(DataType::List(Box::new(DataType::Int16))),
+        &Type::INT2_ARRAY => Some(DataType::List(Box::new(Field::new("", DataType::Int16, true)))),
         //        &INT2_VECTOR => None,
         //        &INT2_VECTOR_ARRAY => None,
-        &Type::INT4_ARRAY => Some(DataType::List(Box::new(DataType::Int32))),
+        &Type::INT4_ARRAY => Some(DataType::List(Box::new(Field::new("", DataType::Int32, true)))),
         //        &TEXT_ARRAY => None,
-        &Type::INT8_ARRAY => Some(DataType::List(Box::new(DataType::Int64))),
-        &Type::FLOAT4_ARRAY => Some(DataType::List(Box::new(DataType::Float32))),
-        &Type::FLOAT8_ARRAY => Some(DataType::List(Box::new(DataType::Float64))),
+        &Type::INT8_ARRAY => Some(DataType::List(Box::new(Field::new("", DataType::Int64, true)))),
+        &Type::FLOAT4_ARRAY => Some(DataType::List(Box::new(Field::new("", DataType::Float32, true)))),
+        &Type::FLOAT8_ARRAY => Some(DataType::List(Box::new(Field::new("", DataType::Float64, true)))),
         //        &ABSTIME_ARRAY => None,
         //        &RELTIME_ARRAY => None,
         //        &TINTERVAL_ARRAY => None,
         //        &DATE => None,
         &Type::TIME => Some(DataType::Time64(TimeUnit::Microsecond)),
         &Type::TIMESTAMP => Some(DataType::Timestamp(TimeUnit::Millisecond, None)),
-        &Type::TIMESTAMP_ARRAY => Some(DataType::List(Box::new(DataType::Timestamp(
+
+        &Type::TIMESTAMP_ARRAY => Some(DataType::List(Box::new(Field::new("", DataType::Timestamp(
             TimeUnit::Millisecond, None
-        )))),
+        ), true)))),
+
+        &Type::TIME_ARRAY => Some(DataType::List(Box::new(Field::new("", DataType::Time64(
+            TimeUnit::Millisecond
+        ), true)))),
+
         //        &DATE_ARRAY => None,
-        &Type::TIME_ARRAY => Some(DataType::List(Box::new(DataType::Time64(
-            TimeUnit::Millisecond,
-        )))),
         //        &TIMESTAMPTZ => None,
         //        &TIMESTAMPTZ_ARRAY => None,
         //        &INTERVAL => None,
